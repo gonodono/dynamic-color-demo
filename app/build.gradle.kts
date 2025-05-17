@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.gonodono.dynamiccolor"
-        minSdk = 26
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -39,5 +39,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
-    implementation(libs.material)
+    implementation(libs.material.components)
 }

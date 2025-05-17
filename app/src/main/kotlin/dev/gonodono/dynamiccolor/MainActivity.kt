@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if (Settings.canDrawOverlays(this)) setUpUi() else openPermissions()
+        if (Settings.canDrawOverlays(this)) setUpUi() else openPermissionPage()
     }
 
     override fun onResume() {
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(ui.root)
     }
 
-    private fun openPermissions() {
+    private fun openPermissionPage() {
         val uri = "package:$packageName".toUri()
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, uri)
         startActivity(intent)

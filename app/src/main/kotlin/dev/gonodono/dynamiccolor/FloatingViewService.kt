@@ -35,9 +35,9 @@ class FloatingViewService : Service() {
     ): Int {
         val themedContext =
             ContextThemeWrapper(this, R.style.Theme_DynamicColor)
-        val enableDynamicColor =
+        val isDynamicEnabled =
             intent?.getBooleanExtra(EXTRA_ENABLE_DYNAMIC, false) == true
-        val inflater = if (enableDynamicColor) {
+        val inflater = if (isDynamicEnabled) {
             val dynamicColorContext =
                 DynamicColors.wrapContextIfAvailable(themedContext)
             LayoutInflater.from(dynamicColorContext)
@@ -46,6 +46,11 @@ class FloatingViewService : Service() {
         }
 
         val binding = FloatingViewBinding.inflate(inflater)
+        @SuppressLint("SetTextI18n")
+        binding.textDynamic.text =
+            "Dynamic is " + if (isDynamicEnabled) "enabled." else "disabled."
+        binding.buttonClose.setOnClickListener { stopSelf() }
+
         val density = resources.displayMetrics.density
         val params = WindowManager.LayoutParams(
             (250 * density).roundToInt(),
@@ -55,14 +60,6 @@ class FloatingViewService : Service() {
             PixelFormat.TRANSLUCENT
         )
         params.dimAmount = 0.7F
-
-        @SuppressLint("SetTextI18n")
-        binding.textDynamic.text =
-            "Dynamic is " + if (enableDynamicColor) "enabled." else "disabled."
-        binding.buttonClose.setOnClickListener {
-            @SuppressLint("ImplicitSamInstance") // This seems like a lint bug.
-            stopService(Intent(this, FloatingViewService::class.java))
-        }
 
         disposeFloatingView()
 
