@@ -33,22 +33,21 @@ class FloatingViewService : Service() {
         flags: Int,
         startId: Int
     ): Int {
+        val enableDynamic =
+            intent?.getBooleanExtra(EXTRA_ENABLE_DYNAMIC, false) == true
         val themedContext =
             ContextThemeWrapper(this, R.style.Theme_DynamicColor)
-        val isDynamicEnabled =
-            intent?.getBooleanExtra(EXTRA_ENABLE_DYNAMIC, false) == true
-        val inflater = if (isDynamicEnabled) {
-            val dynamicColorContext =
-                DynamicColors.wrapContextIfAvailable(themedContext)
-            LayoutInflater.from(dynamicColorContext)
+        val inflaterContext = if (enableDynamic) {
+            DynamicColors.wrapContextIfAvailable(themedContext)
         } else {
-            LayoutInflater.from(themedContext)
+            themedContext
         }
+        val inflater = LayoutInflater.from(inflaterContext)
 
         val binding = FloatingViewBinding.inflate(inflater)
         @SuppressLint("SetTextI18n")
         binding.textDynamic.text =
-            "Dynamic is " + if (isDynamicEnabled) "enabled." else "disabled."
+            "Dynamic is " + if (enableDynamic) "enabled." else "disabled."
         binding.buttonClose.setOnClickListener { stopSelf() }
 
         val density = resources.displayMetrics.density
