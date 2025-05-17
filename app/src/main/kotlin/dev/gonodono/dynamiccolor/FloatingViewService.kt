@@ -46,8 +46,7 @@ class FloatingViewService : Service() {
 
         val binding = FloatingViewBinding.inflate(inflater)
         @SuppressLint("SetTextI18n")
-        binding.textDynamic.text =
-            "Dynamic is " + if (enableDynamic) "enabled." else "disabled."
+        binding.textDynamic.text = if (enableDynamic) "Enabled" else "Disabled"
         binding.buttonClose.setOnClickListener { stopSelf() }
 
         val density = resources.displayMetrics.density
@@ -89,8 +88,10 @@ class FloatingViewService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 }
 
+internal const val EXTRA_ENABLE_DYNAMIC =
+    "${BuildConfig.APPLICATION_ID}.extra.ENABLE_DYNAMIC"
+
 private const val TAG = "FloatingViewService"
-internal const val EXTRA_ENABLE_DYNAMIC = "enable_dynamic"
 
 private const val CHANNEL_ID = "floating_view_service"
 private const val CHANNEL_NAME = "Floating View Service"
@@ -103,9 +104,9 @@ private fun createNotification(context: Context): Notification {
         manager.createNotificationChannel(channel)
     }
     val notification = Notification.Builder(context, CHANNEL_ID)
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle(CHANNEL_NAME)
         .setContentText(CHANNEL_NAME)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
         .build()
     return notification
 }

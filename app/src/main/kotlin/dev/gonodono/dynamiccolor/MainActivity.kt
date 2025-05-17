@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // The UI will just be blank if the permission isn't granted.
+        // The main UI is left empty if the permission isn't granted.
         if (!::ui.isInitialized && Settings.canDrawOverlays(this)) setUpUi()
     }
 
