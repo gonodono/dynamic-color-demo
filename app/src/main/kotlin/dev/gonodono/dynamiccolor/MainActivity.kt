@@ -24,12 +24,11 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // The UI will just be blank if the permission isn't granted.
-        if (Settings.canDrawOverlays(this) && !::ui.isInitialized) setUpUi()
+        if (!::ui.isInitialized && Settings.canDrawOverlays(this)) setUpUi()
     }
 
     private fun setUpUi() {
         val ui = ActivityMainBinding.inflate(layoutInflater).also { ui = it }
-        setContentView(ui.root)
         ViewCompat.setOnApplyWindowInsetsListener(ui.root) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
@@ -37,9 +36,10 @@ class MainActivity : AppCompatActivity() {
         }
         ui.buttonShowView.setOnClickListener {
             val service = Intent(this, FloatingViewService::class.java)
-                .putExtra(EXTRA_ENABLE_COLOR, ui.checkDynamicColor.isChecked)
+                .putExtra(EXTRA_ENABLE_DYNAMIC, ui.checkDynamicColor.isChecked)
             ContextCompat.startForegroundService(this, service)
         }
+        setContentView(ui.root)
     }
 
     private fun openPermissions() {

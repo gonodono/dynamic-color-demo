@@ -36,7 +36,7 @@ class FloatingViewService : Service() {
         val themedContext =
             ContextThemeWrapper(this, R.style.Theme_DynamicColor)
         val enableDynamicColor =
-            intent?.getBooleanExtra(EXTRA_ENABLE_COLOR, false) == true
+            intent?.getBooleanExtra(EXTRA_ENABLE_DYNAMIC, false) == true
         val inflater = if (enableDynamicColor) {
             val dynamicColorContext =
                 DynamicColors.wrapContextIfAvailable(themedContext)
@@ -56,8 +56,11 @@ class FloatingViewService : Service() {
         )
         params.dimAmount = 0.7F
 
+        @SuppressLint("SetTextI18n")
+        binding.textDynamic.text =
+            "Dynamic is " + if (enableDynamicColor) "enabled." else "disabled."
         binding.buttonClose.setOnClickListener {
-            @SuppressLint("ImplicitSamInstance")
+            @SuppressLint("ImplicitSamInstance") // This seems like a lint bug.
             stopService(Intent(this, FloatingViewService::class.java))
         }
 
@@ -91,7 +94,7 @@ class FloatingViewService : Service() {
 }
 
 private const val TAG = "FloatingViewService"
-internal const val EXTRA_ENABLE_COLOR = "enable_color"
+internal const val EXTRA_ENABLE_DYNAMIC = "enable_dynamic"
 
 private const val CHANNEL_ID = "floating_view_service"
 private const val CHANNEL_NAME = "Floating View Service"
