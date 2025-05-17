@@ -1,0 +1,50 @@
+package dev.gonodono.dynamiccolor
+
+import android.content.Intent
+import android.os.Bundle
+import android.provider.Settings
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import dev.gonodono.dynamiccolor.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var ui: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        if (Settings.canDrawOverlays(this)) setUpUi() else openPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // The UI will just be blank if the permission isn't granted.
+        if (Settings.canDrawOverlays(this) && !::ui.isInitialized) setUpUi()
+    }
+
+    private fun setUpUi() {
+        val ui = ActivityMainBinding.inflate(layoutInflater).also { ui = it }
+        setContentView(ui.root)
+        ViewCompat.setOnApplyWindowInsetsListener(ui.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+        ui.buttonShowView.setOnClickListener {
+            val service = Intent(this, FloatingViewService::class.java)
+                .putExtra(EXTRA_ENABLE_COLOR, ui.checkDynamicColor.isChecked)
+            ContextCompat.startForegroundService(this, service)
+        }
+    }
+
+    private fun openPermissions() {
+        val uri = "package:$packageName".toUri()
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, uri)
+        startActivity(intent)
+    }
+}
