@@ -7,7 +7,7 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.DynamicColor">
+        android:theme="@style/Theme.DynamicColorService">
 
         <activity
             android:name=".MainActivity"

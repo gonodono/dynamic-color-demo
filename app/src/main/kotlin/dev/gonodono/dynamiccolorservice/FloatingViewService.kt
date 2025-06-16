@@ -1,4 +1,4 @@
-package dev.gonodono.dynamiccolor
+package dev.gonodono.dynamiccolorservice
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -9,14 +9,18 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.hardware.display.DisplayManager
 import android.os.IBinder
 import android.util.Log
 import android.view.ContextThemeWrapper
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 import com.google.android.material.color.DynamicColors
-import dev.gonodono.dynamiccolor.databinding.FloatingViewBinding
+import dev.gonodono.dynamiccolorservice.databinding.FloatingViewBinding
 import kotlin.math.roundToInt
 
 class FloatingViewService : Service() {
@@ -35,8 +39,19 @@ class FloatingViewService : Service() {
     ): Int {
         val enableDynamic =
             intent?.getBooleanExtra(EXTRA_ENABLE_DYNAMIC, false) == true
-        val themedContext =
-            ContextThemeWrapper(this, R.style.Theme_DynamicColor)
+
+        // Proper method to obtain a UI Context from a non-UI one.
+        val defaultDisplay = getSystemService(DisplayManager::class.java)
+            .getDisplay(Display.DEFAULT_DISPLAY)
+        val windowContext = createDisplayContext(defaultDisplay)
+            .createWindowContext(TYPE_APPLICATION_OVERLAY, null)
+
+        // Material Components Views require a compatible theme.
+        val themedContext = ContextThemeWrapper(
+            windowContext,
+            R.style.Theme_DynamicColorService
+        )
+
         val inflaterContext = if (enableDynamic) {
             DynamicColors.wrapContextIfAvailable(themedContext)
         } else {
@@ -53,8 +68,8 @@ class FloatingViewService : Service() {
         val params = WindowManager.LayoutParams(
             (250 * density).roundToInt(),
             (300 * density).roundToInt(),
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+            TYPE_APPLICATION_OVERLAY,
+            FLAG_DIM_BEHIND,
             PixelFormat.TRANSLUCENT
         )
         params.dimAmount = 0.7F
@@ -63,7 +78,7 @@ class FloatingViewService : Service() {
 
         floatingView = try {
             val view = binding.root
-            getSystemService(WindowManager::class.java).addView(view, params)
+            windowManager.addView(view, params)
             view
         } catch (e: Exception) {
             if (BuildConfig.DEBUG) Log.d(TAG, "Error adding View", e)
@@ -75,7 +90,7 @@ class FloatingViewService : Service() {
 
     private fun disposeFloatingView() {
         floatingView?.let { view ->
-            getSystemService(WindowManager::class.java).removeView(view)
+            windowManager.removeView(view)
             floatingView = null
         }
     }
@@ -110,3 +125,6 @@ private fun createNotification(context: Context): Notification {
         .build()
     return notification
 }
+
+private val Context.windowManager: WindowManager
+    get() = getSystemService(WindowManager::class.java)

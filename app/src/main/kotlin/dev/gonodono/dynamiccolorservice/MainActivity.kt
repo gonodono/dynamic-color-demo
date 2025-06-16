@@ -1,4 +1,4 @@
-package dev.gonodono.dynamiccolor
+package dev.gonodono.dynamiccolorservice
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import dev.gonodono.dynamiccolor.databinding.ActivityMainBinding
+import dev.gonodono.dynamiccolorservice.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

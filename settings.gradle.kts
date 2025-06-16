@@ -21,6 +21,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "dynamic-color-demo"
+rootProject.name = "dynamic-color-service"
 
 include(":app")

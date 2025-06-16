@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.gonodono.dynamiccolor"
+    namespace = "dev.gonodono.dynamiccolorservice"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "dev.gonodono.dynamiccolor"
+        applicationId = "dev.gonodono.dynamiccolorservice"
         minSdk = 31
         targetSdk = 35
         versionCode = 1
